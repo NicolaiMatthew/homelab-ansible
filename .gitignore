@@ -1,0 +1,15 @@
+# Ansible vault files — never commit unencrypted secrets
+inventory/vault.yml
+
+# Retry files
+*.retry
+
+# Python cache
+__pycache__/
+*.pyc
+
+# SSH keys — never commit these
+*.pem
+*.key
+id_rsa
+id_ed25519

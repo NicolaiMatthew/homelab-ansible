@@ -1,0 +1,91 @@
+---
+- name: Provision a new LXC on Proxmox
+  hosts: host1
+  gather_facts: no
+  vars:
+    lxc_id: 121
+    lxc_hostname: "test-lxc"
+    lxc_memory: 512
+    lxc_disk: "local-lvm:8"
+    lxc_cores: 1
+    lxc_ip: "192.168.68.121"
+    lxc_gw: "192.168.68.1"
+    lxc_password: "changeme123"
+    template: "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
+    proxmox_node: "host1"
+    ssh_public_key: "{{ lookup('file', '~/.ssh/ansible_key.pub') }}"
+
+  tasks:
+    - name: Create LXC container
+      community.proxmox.proxmox:
+        api_host: localhost
+        api_user: root@pam
+        api_password: "{{ proxmox_password }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ lxc_id }}"
+        hostname: "{{ lxc_hostname }}"
+        ostemplate: "{{ template }}"
+        memory: "{{ lxc_memory }}"
+        disk: "{{ lxc_disk }}"
+        cores: "{{ lxc_cores }}"
+        netif: '{"net0":"name=eth0,bridge=vmbr0,ip={{ lxc_ip }}/24,gw={{ lxc_gw }},type=veth"}'
+        password: "{{ lxc_password }}"
+        unprivileged: yes
+        features:
+          - nesting=1
+        state: present
+
+    - name: Start LXC
+      community.proxmox.proxmox:
+        api_host: localhost
+        api_user: root@pam
+        api_password: "{{ proxmox_password }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ lxc_id }}"
+        state: started
+
+    - name: Inject SSH key via pct
+      shell: |
+        pct exec {{ lxc_id }} -- bash -c "
+          mkdir -p /root/.ssh &&
+          chmod 700 /root/.ssh &&
+          echo '{{ ssh_public_key }}' > /root/.ssh/authorized_keys &&
+          chmod 600 /root/.ssh/authorized_keys
+        "
+      changed_when: true
+
+    - name: Ensure SSH is enabled and running
+      shell: pct exec {{ lxc_id }} -- bash -c "systemctl enable ssh && systemctl start ssh"
+      changed_when: true
+
+    - name: Wait for SSH to become available
+      wait_for:
+        host: "{{ lxc_ip }}"
+        port: 22
+        delay: 5
+        timeout: 60
+        state: started
+
+    - name: Install base packages
+      delegate_to: "{{ lxc_ip }}"
+      vars:
+        ansible_user: root
+        ansible_ssh_private_key_file: ~/.ssh/ansible_key
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      apt:
+        name:
+          - curl
+          - wget
+          - vim
+          - htop
+          - git
+        update_cache: yes
+
+    - name: Add LXC to Ansible inventory reminder
+      debug:
+        msg: |
+          LXC {{ lxc_id }} ({{ lxc_hostname }}) provisioned successfully
+          IP: {{ lxc_ip }}
+          Add to inventory/hosts.yml:
+            {{ lxc_hostname }}:
+              ansible_host: {{ lxc_ip }}

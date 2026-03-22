@@ -1,0 +1,15 @@
+---
+base_timezone: "America/New_York"
+
+base_packages:
+  - curl
+  - wget
+  - vim
+  - htop
+  - git
+  - net-tools
+  - unattended-upgrades
+
+base_ssh_port: 22
+base_permit_root_login: "prohibit-password"
+base_password_authentication: "no"

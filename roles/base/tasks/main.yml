@@ -1,0 +1,55 @@
+---
+- name: Set timezone
+  timezone:
+    name: "{{ base_timezone }}"
+
+- name: Install base packages
+  apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Configure SSH hardening
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin {{ base_permit_root_login }}' }
+    - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication {{ base_password_authentication }}' }
+    - { regexp: '^#?X11Forwarding', line: 'X11Forwarding no' }
+    - { regexp: '^#?MaxAuthTries', line: 'MaxAuthTries 3' }
+    - { regexp: '^#?Port', line: 'Port {{ base_ssh_port }}' }
+  notify: Restart SSH
+
+- name: Set a useful MOTD
+  copy:
+    content: |
+      ################################################
+      #           Homelab Infrastructure             #
+      #         Managed by Ansible                   #
+      ################################################
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable unattended upgrades
+  debconf:
+    name: unattended-upgrades
+    question: unattended-upgrades/enable_auto_updates
+    value: "true"
+    vtype: boolean
+
+- name: Ensure unattended-upgrades is configured
+  copy:
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: '0644'

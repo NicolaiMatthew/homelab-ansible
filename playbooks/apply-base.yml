@@ -1,0 +1,6 @@
+---
+- name: Apply base configuration to all LXCs
+  hosts: lxc
+  gather_facts: yes
+  roles:
+    - base

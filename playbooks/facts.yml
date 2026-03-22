@@ -1,0 +1,13 @@
+---
+- name: Gather homelab system facts
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Print system information
+      debug:
+        msg: |
+          Host: {{ inventory_hostname }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          RAM: {{ ansible_memtotal_mb }}MB
+          CPU cores: {{ ansible_processor_vcpus }}
+          IP: {{ ansible_host }}
