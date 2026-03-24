@@ -1,0 +1,7 @@
+---
+- name: Install Docker on target hosts
+  hosts: "{{ target_hosts | default('docker') }}"
+  gather_facts: yes
+  roles:
+    - base
+    - docker

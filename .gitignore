@@ -1,5 +1,6 @@
 # Ansible vault files — never commit unencrypted secrets
 inventory/vault.yml
+inventory/proxmox.yml
 
 # Retry files
 *.retry
