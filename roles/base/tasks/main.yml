@@ -17,11 +17,16 @@
     line: "{{ item.line }}"
     state: present
   loop:
-    - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin {{ base_permit_root_login }}' }
-    - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication {{ base_password_authentication }}' }
-    - { regexp: '^#?X11Forwarding', line: 'X11Forwarding no' }
-    - { regexp: '^#?MaxAuthTries', line: 'MaxAuthTries 3' }
-    - { regexp: '^#?Port', line: 'Port {{ base_ssh_port }}' }
+    - regexp: '^#?PermitRootLogin'
+      line: 'PermitRootLogin {{ base_permit_root_login }}'
+    - regexp: '^#?PasswordAuthentication'
+      line: 'PasswordAuthentication {{ base_password_authentication }}'
+    - regexp: '^#?X11Forwarding'
+      line: 'X11Forwarding no'
+    - regexp: '^#?MaxAuthTries'
+      line: 'MaxAuthTries 3'
+    - regexp: '^#?Port'
+      line: 'Port {{ base_ssh_port }}'
   notify: Restart SSH
 
 - name: Set a useful MOTD
