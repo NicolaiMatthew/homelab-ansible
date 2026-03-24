@@ -1,0 +1,13 @@
+profile: moderate
+
+skip_list:
+  - yaml[truthy]
+  - no-changed-when
+  - command-instead-of-module
+
+warn_list:
+  - yaml[line-length]
+
+exclude_paths:
+  - roles/base/tests/
+  - roles/docker/tests/
