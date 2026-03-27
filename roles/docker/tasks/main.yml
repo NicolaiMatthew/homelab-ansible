@@ -37,7 +37,7 @@
 
 - name: Install Docker packages
   apt:
-    name: "{{docker_packages}}"
+    name: "{{ docker_packages }}"
     state: present
 
 - name: Ensure Docker service is enabled and running
@@ -48,10 +48,10 @@
 
 - name: Add users to docker group
   user:
-    name: "{{item}}"
+    name: "{{ item }}"
     groups: docker
     append: yes
-  loop: "{{docker_users}}"
+  loop: "{{ docker_users }}"
   when: docker_users | length > 0
 
 - name: Verify Docker is working
@@ -67,4 +67,4 @@
 
 - name: Print Docker status
   debug:
-    msg: "Docker installed successfully: {{docker_version.stdout}}"
+    msg: "Docker installed successfully: {{ docker_version.stdout }}"
