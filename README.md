@@ -1,5 +1,7 @@
 # Homelab Ansible
 
+![Ansible CI](https://github.com/NicolaiMatthew/homelab-ansible/actions/workflows/ansible-lint.yml/badge.svg)
+
 Infrastructure automation for my Proxmox homelab.
 
 ## Playbooks
