@@ -4,6 +4,9 @@
 
 Infrastructure automation for my Proxmox homelab.
 
+## 📝 Writing
+
+- [How I Built a Production-Grade Homelab on a $200 Mini PC](https://dev.to/nicolaimatthew/how-i-built-a-production-grade-homelab-on-a-200-mini-pc-2154)
 ## Playbooks
 
 | Playbook | Description |
