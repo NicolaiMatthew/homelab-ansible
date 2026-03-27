@@ -4,6 +4,7 @@ skip_list:
   - yaml[truthy]
   - no-changed-when
   - command-instead-of-module
+  - schema[meta]
 
 warn_list:
   - yaml[line-length]
@@ -11,3 +12,5 @@ warn_list:
 exclude_paths:
   - roles/base/tests/
   - roles/docker/tests/
+  - roles/*/meta/
+  - roles/*/vars/

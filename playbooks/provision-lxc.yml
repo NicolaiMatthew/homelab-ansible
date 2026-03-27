@@ -3,12 +3,12 @@
   hosts: host1
   gather_facts: no
   vars:
-    lxc_id: 121
-    lxc_hostname: "test-lxc"
+    lxc_id: 116
+    lxc_hostname: "nginx-proxy-manager"
     lxc_memory: 512
-    lxc_disk: "local-lvm:8"
+    lxc_disk: "local-lvm:4"
     lxc_cores: 1
-    lxc_ip: "192.168.68.121"
+    lxc_ip: "192.168.68.115"
     lxc_gw: "192.168.68.1"
     lxc_password: "changeme123"
     template: "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
